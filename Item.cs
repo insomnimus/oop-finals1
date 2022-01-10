@@ -1,38 +1,37 @@
 using System;
-using System.IO.File;
+using System.IO;
 using System.Text.Json;
 using System.Collections.Generic;
 
 namespace PaymentApp;
 
 public struct Item {
-	public uint ShippingWeight { get; set; }
+	public uint ShipmentWeight { get; set; }
 	public string Description { get; set; }
 	public ulong Price { get; set; }
 	public ulong ID;
 
-	public ulong GetPriceForQuantity(uint quantity) => this.price * quantity;
+	public ulong GetPriceForQuantity(uint quantity) => this.Price * quantity;
 }
 
 public struct ItemInfo {
-	public TaxState Tax;
+	public TaxStatus Tax;
 	public Item Item;
 
-	public ItemInfo(Item item, TaxState tax) => (this.Item, this.Tax) = (item, tax);
+	public ItemInfo(Item item, TaxStatus tax) => (this.Item, this.Tax) = (item, tax);
 }
 
 public class ItemRepository {
-	public ItemRepository() {
-		this.items = new Dictionary<ulong, ItemInfo>() { };
-	}
+	public ItemRepository() { }
 
 	public ItemRepository(string jsonFile) {
 		var data = File.ReadAllBytes(jsonFile);
-		this.items = JsonSerializer.Deserialize < Dictionary<ulong, ItemInfo>(new ReadOnlySpan<byte>(data));
+		var parsed = JsonSerializer.Deserialize<Dictionary<ulong, ItemInfo>>(new ReadOnlySpan<byte>(data));
+		if (parsed is not null) this.items = parsed;
 	}
 
-	private Dictionary<ulong, ItemInfo> Items;
-	public Dictionary<ulong, ItemInfo>.ValueCollection Items => this.items.Values;
+	private Dictionary<ulong, ItemInfo> items = new Dictionary<ulong, ItemInfo>() { };
+	public ICollection<ItemInfo> Items => this.items.Values;
 	public int Count => this.items.Count;
 
 	public void ExportToFile(string file) {
@@ -48,7 +47,7 @@ public class ItemRepository {
 	public ItemInfo GetInfo(ulong id) => this.items[id];
 	public TaxStatus GetTaxStatus(ulong id) => this.items[id].Tax;
 
-	public List<ItemInfo> GetItemsByID(params ulong ids) {
+	public List<ItemInfo> GetItemsByID(params ulong[] ids) {
 		var xs = new List<ItemInfo>() { };
 		foreach (var id in ids) {
 			var info = default(ItemInfo);
@@ -57,7 +56,7 @@ public class ItemRepository {
 		return xs;
 	}
 
-	public int InsertOrReplaceItems(params ItemInfo values) {
+	public int InsertOrReplaceItems(params ItemInfo[] values) {
 		var added = 0;
 		foreach (var info in values) {
 			if (this.items.TryAdd(info.Item.ID, info)) {

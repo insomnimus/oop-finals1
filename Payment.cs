@@ -30,17 +30,8 @@ public class CreditCard: Payment {
 
 	public uint No { get; private set; }
 	public CardType Type { get; private set; }
-	public DateTime Expriy { get; private set; }
-	private bool _authorized = false;
-
-	public bool AuthorizePayment() {
-		if (this._authorized) return true;
-		// Authorize payment here.
-		if (this.Expiry < DateTime.Now) return false;
-
-		this._authorized = true;
-		return true;
-	}
+	public DateTime Expiry { get; private set; }
+	public bool Authorized { get; set; } = false;
 }
 
 public class Check: Payment {
@@ -52,19 +43,13 @@ public class Check: Payment {
 
 	public string Name { get; private set; }
 	public Bank Bank { get; private set; }
-	private bool _authorized = false;
-
-	public bool Authorized => this._authorized;
-	public bool Authorize() {
-		if (this._authorized) return true;
-		// Authorize payment here.
-		this._authorized = true;
-		return true;
-	}
+	public bool Authorized { get; set; } = false;
 }
 
 public class Cash: Payment {
-	public Cash(ulong amount) : base(amount) { }
+	public Cash(ulong amount, ulong cashQuantity) : base(amount) {
+		this.CashQuantity = cashQuantity;
+	}
 
-	// public uint CashQuantity {get; private set;}
+	public ulong CashQuantity { get; private set; }
 }
