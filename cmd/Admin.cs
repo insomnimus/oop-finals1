@@ -15,9 +15,6 @@ exit: Exit the app without saving. You can also use ctrl+c.";
 
 	protected override void execute(string cmd, string arg) {
 		switch (cmd.ToLower()) {
-			case "list":
-				base.ListItems();
-				break;
 			case "save":
 				var path = string.IsNullOrEmpty(arg) ? base.DBPath : arg;
 				this.save(path);

@@ -25,15 +25,11 @@ public abstract class Cmd {
 				if (string.IsNullOrEmpty(cmd)) continue;
 
 				var split = cmd.Split(' ', 2);
-				if (string.Equals(
-				split[0],
-				"help",
-				StringComparison.OrdinalIgnoreCase)) {
+				if (string.Equals(split[0], "help", StringComparison.OrdinalIgnoreCase)) {
 					Console.WriteLine(this.helpMsg);
-				} else if (string.Equals(
-			   split[0],
-			   "exit",
-			   StringComparison.OrdinalIgnoreCase)) {
+				} else if (string.Equals(split[0], "list", StringComparison.OrdinalIgnoreCase)) {
+					this.ListItems();
+				} else if (string.Equals(split[0], "exit", StringComparison.OrdinalIgnoreCase)) {
 					Console.WriteLine("Exiting...");
 					return;
 				} else {
