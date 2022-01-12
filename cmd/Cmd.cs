@@ -19,26 +19,30 @@ public abstract class Cmd {
 
 	public void Run() {
 		while (true) {
-			var cmd = this.ReadPrompt(this.prompt);
+			try {
+				var cmd = this.ReadPrompt(this.prompt);
 
-			if (string.IsNullOrEmpty(cmd)) continue;
+				if (string.IsNullOrEmpty(cmd)) continue;
 
-			var split = cmd.Split(' ', 2);
-			if (string.Equals(
-			split[0],
-			"help",
-			StringComparison.OrdinalIgnoreCase)) {
-				Console.WriteLine(this.helpMsg);
-			} else if (string.Equals(
-		   split[0],
-		   "exit",
-		   StringComparison.OrdinalIgnoreCase)) {
-				Console.WriteLine("Exiting...");
-				return;
-			} else {
-				var arg = "";
-				if (split.Length > 1) arg = split[1].Trim();
-				this.execute(split[0], arg);
+				var split = cmd.Split(' ', 2);
+				if (string.Equals(
+				split[0],
+				"help",
+				StringComparison.OrdinalIgnoreCase)) {
+					Console.WriteLine(this.helpMsg);
+				} else if (string.Equals(
+			   split[0],
+			   "exit",
+			   StringComparison.OrdinalIgnoreCase)) {
+					Console.WriteLine("Exiting...");
+					return;
+				} else {
+					var arg = "";
+					if (split.Length > 1) arg = split[1].Trim();
+					this.execute(split[0], arg);
+				}
+			} catch (Exception e) {
+				Console.WriteLine($"error: {e}");
 			}
 		}
 	}

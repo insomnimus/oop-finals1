@@ -14,39 +14,35 @@ save [path]: Save the state of the database. You can omit the path parameter to 
 exit: Exit the app without saving. You can also use ctrl+c.";
 
 	protected override void execute(string cmd, string arg) {
-		try {
-			switch (cmd.ToLower()) {
-				case "list":
-					base.ListItems();
-					break;
-				case "save":
-					var path = string.IsNullOrEmpty(arg) ? base.DBPath : arg;
-					this.save(path);
-					break;
-				case "remove" when this.repo.Count <= 0:
-					Console.WriteLine("There are no items to remove. Add some with `set`.");
-					break;
-				case "remove":
-					ulong id = 0;
-					if (string.IsNullOrEmpty(arg)) Console.WriteLine("you need to specify an id");
-					else if (ulong.TryParse(arg, out id)) {
-						if (this.repo.RemoveItemsByID(id) == 0) Console.WriteLine($"There is no item with the id {id}.");
-						else Console.WriteLine($"Removed the item with the id {id}.");
-					} else {
-						Console.WriteLine($"{arg} is not a valid id; the value must be a positive integer or 0.");
-					}
-					break;
-				case "set":
-					if (string.IsNullOrEmpty(arg)) Console.WriteLine("You must specify an id.");
-					else if (ulong.TryParse(arg, out id)) this.setItem(id);
-					else Console.WriteLine($"{arg} is not a valid id; the value must be a positive integer or 0.");
-					break;
-				default:
-					Console.WriteLine($"{cmd} is not recognized as a command. Type `help` to see available commands.");
-					break;
-			}
-		} catch (Exception e) {
-			Console.WriteLine($"error: {e}");
+		switch (cmd.ToLower()) {
+			case "list":
+				base.ListItems();
+				break;
+			case "save":
+				var path = string.IsNullOrEmpty(arg) ? base.DBPath : arg;
+				this.save(path);
+				break;
+			case "remove" when this.repo.Count <= 0:
+				Console.WriteLine("There are no items to remove. Add some with `set`.");
+				break;
+			case "remove":
+				ulong id = 0;
+				if (string.IsNullOrEmpty(arg)) Console.WriteLine("you need to specify an id");
+				else if (ulong.TryParse(arg, out id)) {
+					if (this.repo.RemoveItemsByID(id) == 0) Console.WriteLine($"There is no item with the id {id}.");
+					else Console.WriteLine($"Removed the item with the id {id}.");
+				} else {
+					Console.WriteLine($"{arg} is not a valid id; the value must be a positive integer or 0.");
+				}
+				break;
+			case "set":
+				if (string.IsNullOrEmpty(arg)) Console.WriteLine("You must specify an id.");
+				else if (ulong.TryParse(arg, out id)) this.setItem(id);
+				else Console.WriteLine($"{arg} is not a valid id; the value must be a positive integer or 0.");
+				break;
+			default:
+				Console.WriteLine($"{cmd} is not recognized as a command. Type `help` to see available commands.");
+				break;
 		}
 	}
 
