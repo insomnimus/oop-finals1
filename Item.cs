@@ -67,4 +67,12 @@ public class ItemRepository {
 		}
 		return added;
 	}
+
+	public int RemoveItemsByID(params ulong[] ids) {
+		int removed = 0;
+		foreach (var id in ids) {
+			if (this.items.Remove(id)) removed++;
+		}
+		return removed;
+	}
 }
