@@ -13,5 +13,5 @@ Sign in as an admin:
 
 Sign in as a customer:
 ```sh
-./DatabaseApp customer -p ./database.json --name 'John Smith' --address 'Beverly Hills'
+./PaymentApp customer -p ./database.json --name 'John Smith' --address 'Beverly Hills'
 ```
