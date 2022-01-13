@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using System.Text.Json;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace PaymentApp;
@@ -25,8 +25,8 @@ public class ItemRepository {
 	public ItemRepository() { }
 
 	public ItemRepository(string jsonFile) {
-		var data = File.ReadAllBytes(jsonFile);
-		var parsed = JsonSerializer.Deserialize<Dictionary<ulong, ItemInfo>>(new ReadOnlySpan<byte>(data));
+		var data = File.ReadAllText(jsonFile);
+		var parsed = JsonConvert.DeserializeObject<Dictionary<ulong, ItemInfo>>(data);
 		if (parsed is not null) this.items = parsed;
 	}
 
@@ -35,10 +35,8 @@ public class ItemRepository {
 	public int Count => this.items.Count;
 
 	public void ExportToFile(string file) {
-		var writer = File.Create(file);
-		var options = new JsonSerializerOptions { WriteIndented = true };
-		JsonSerializer.Serialize(writer, this.items, typeof(Dictionary<ulong, ItemInfo>), options);
-		writer.Close();
+		var data = JsonConvert.SerializeObject(this.items, Formatting.Indented);
+		File.WriteAllText(file, data);
 	}
 
 	public void AddItem(Item item, TaxStatus tax) => this.items.Add(item.ID, new ItemInfo(item, tax));
