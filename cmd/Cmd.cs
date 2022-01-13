@@ -15,9 +15,12 @@ public abstract class Cmd {
 	protected abstract string helpMsg { get; }
 	protected abstract string prompt { get; }
 
+	internal virtual void onStartup() => Console.WriteLine(this.helpMsg);
+
 	protected abstract void execute(string cmd, string arg);
 
 	public void Run() {
+		this.onStartup();
 		while (true) {
 			try {
 				var cmd = this.ReadPrompt(this.prompt);

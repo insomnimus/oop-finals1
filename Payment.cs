@@ -7,11 +7,26 @@ public enum CardType {
 	Visa
 }
 
-public enum Bank {
-	IsBank,
-	AkBank,
-	ZiraatBank,
-	GarantiBank
+public struct Expiry {
+	public Expiry(byte month, ushort year) {
+		if (month == 0 || month > 12) throw new ArgumentException($"month cannot be {month}");
+		this._month = month;
+		this.Year = year;
+	}
+
+	private byte _month;
+
+
+	public ushort Year { get; set; }
+	public byte Month {
+		get => this._month;
+		set {
+			if (value == 0 || value > 12) throw new ArgumentException($"month can't be {value}");
+			this._month = value;
+		}
+	}
+
+	public override string ToString() => $"{this.Month:D2}/{this.Year}";
 }
 
 public abstract class Payment {
@@ -21,7 +36,7 @@ public abstract class Payment {
 }
 
 public class CreditCard: Payment {
-	public CreditCard(ulong amount, uint no, CardType typ, DateTime expiry)
+	public CreditCard(ulong amount, uint no, CardType typ, Expiry expiry)
 	: base(amount) {
 		this.No = no;
 		this.Type = typ;
@@ -30,19 +45,19 @@ public class CreditCard: Payment {
 
 	public uint No { get; private set; }
 	public CardType Type { get; private set; }
-	public DateTime Expiry { get; private set; }
+	public Expiry Expiry { get; private set; }
 	public bool Authorized { get; set; } = false;
 }
 
 public class Check: Payment {
-	public Check(ulong amount, string name, Bank bank)
+	public Check(ulong amount, string name, string bank)
 	: base(amount) {
 		this.Name = name;
 		this.Bank = bank;
 	}
 
 	public string Name { get; private set; }
-	public Bank Bank { get; private set; }
+	public string Bank { get; private set; }
 	public bool Authorized { get; set; } = false;
 }
 

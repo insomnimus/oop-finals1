@@ -29,6 +29,7 @@ public struct TaxStatus {
 	}
 
 	public ulong Calc(ulong price) => (ulong)(this._percentage * price / 100);
+	public override string ToString() => $"{this._percentage:0.##}%";
 }
 
 public class Order {
@@ -57,6 +58,12 @@ public class Order {
 		if (this.Status != OrderStatus.NotFinalized) throw new InvalidOperationException("the order is already finalized or failed");
 		var details = OrderDetails.FromItemInfo(item, quantity);
 		this._ordered.Add(details);
+	}
+
+	public ulong CalcTotalPrice() {
+		ulong total = 0;
+		foreach (var x in this._ordered) total += x.TotalPrice;
+		return total;
 	}
 
 	public void Finalize(CreditCard payment) {
@@ -100,7 +107,9 @@ public class OrderDetails {
 	public Item Item;
 
 	public ulong TotalTax => this.TaxStatus.Calc(this.Item.Price * this.Quantity);
+	public ulong TotalPrice => this.TaxStatus.Calc(this.Item.Price * this.Quantity) + this.Item.Price * this.Quantity;
 	public ulong CalcWeight() => this.Quantity * this.Item.ShipmentWeight;
+
 
 	public static OrderDetails FromItemInfo(ItemInfo info, uint quantity) => new OrderDetails(info.Item, quantity, info.Tax);
 }
